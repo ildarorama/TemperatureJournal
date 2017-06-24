@@ -10,6 +10,7 @@
 
 QT_CHARTS_USE_NAMESPACE
 
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -39,6 +40,14 @@ MainWindow::MainWindow(QWidget *parent) :
         chart->addAxis(axisY, Qt::AlignLeft);
         series->attachAxis(axisY);
 
+        QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
+        db.setHostName("localhost");
+        db.setDatabaseName("cook");
+        db.setUserName("cook");
+        db.setPassword("cook");
+        bool ok = db.open();
+
+
      QChartView *chartView = new QChartView(chart);
         chartView->setRenderHint(QPainter::Antialiasing);
 
@@ -54,8 +63,21 @@ void MainWindow::update() {
     QDateTime mz;
     qint64 t=mz.currentDateTime().toMSecsSinceEpoch();
     series->append(t, z++);
-    series->
+
     qInfo("printe time ");
+
+
+
+    bool ok = db.open();
+    if ( ok ) {
+
+        QString s="insert into test(i) values(";
+        s.append(z);
+        s.append(")");
+        qInfo(s.toLatin1().data());
+        db.exec(s);
+    }
+
 }
 
 MainWindow::~MainWindow()

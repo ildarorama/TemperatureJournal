@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QtCharts/QLineSeries>
+#include <QtSql>
 
 namespace Ui {
 class MainWindow;
@@ -23,6 +24,7 @@ private:
     Ui::MainWindow *ui;
     QtCharts::QLineSeries *series;
     int z;
+    QSqlDatabase db;
 };
 
 #endif // MAINWINDOW_H
