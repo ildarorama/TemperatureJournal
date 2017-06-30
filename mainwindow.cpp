@@ -53,6 +53,8 @@ MainWindow::MainWindow(QWidget *parent) :
     chartView->setRenderHint(QPainter::Antialiasing);
 
 
+    ui->frame->
+
     setCentralWidget(chartView);
 
     QTimer *timer = new QTimer(this);
