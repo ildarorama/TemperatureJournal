@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QtCharts/QLineSeries>
 #include <QtSql>
+#include <QtCharts/QChartView>
+#include <QtCharts/QChart>
 
 namespace Ui {
 class MainWindow;
@@ -23,8 +25,11 @@ public slots:
 private:
     Ui::MainWindow *ui;
     QtCharts::QLineSeries *series;
-    int z;
+    double z;
     QSqlDatabase db;
+    QtCharts::QChartView * createChart();
+    QtCharts::QChart * chart;
+    QtCharts::QChartView * chartView;
 };
 
 #endif // MAINWINDOW_H
