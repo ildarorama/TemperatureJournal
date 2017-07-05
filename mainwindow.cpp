@@ -49,7 +49,8 @@ QChartView* MainWindow::createChart() {
     axisX->setFormat("hh mm ss");
     axisX->setTitleText("Время");
     chart->addAxis(axisX, Qt::AlignBottom);
-    series->attachAxis(axisX);
+ //   series->attachAxis(axisX);
+    chart->setAxisX(axisX,series);
 
     QValueAxis *axisY = new QValueAxis;
     axisY->setLabelFormat("%i");
