@@ -41,53 +41,45 @@ QChartView* MainWindow::createChart() {
 
     series = new QLineSeries();
     chart = new QChart();
-    chart->legend()->hide();
     chart->addSeries(series);
     chart->setTitle("Варка");
 
     QDateTimeAxis *axisX = new QDateTimeAxis;
-    axisX->setTickCount(1);
-    axisX->setFormat("dd:mm HH:MM:ss");
+    axisX->setTickCount(10);
+    axisX->setFormat("hh mm ss");
     axisX->setTitleText("Время");
     chart->addAxis(axisX, Qt::AlignBottom);
+    series->attachAxis(axisX);
 
     QValueAxis *axisY = new QValueAxis;
-    axisY->setLabelFormat("%d");
+    axisY->setLabelFormat("%i");
     axisY->setTitleText("Температура");
-    chart->addAxis(axisY, Qt::AlignLeft);
-    axisY->setRange(0,110);
+    //axisY->setRange(0,110);
     axisY->setTickCount(20);
-
-
-    QDateTime min;
-    QDateTime max;
-
-    //axisX->setRange(min,max);
-
-
-
-       for(int i=0;i<100;i++) {
-           update();
-       }
-
-    series->attachAxis(axisX);
+    chart->addAxis(axisY, Qt::AlignLeft);
     series->attachAxis(axisY);
-    chart->addSeries(series);
+
+    QPoint p;
+    p.setX(QDateTime::currentMSecsSinceEpoch());
+    p.setY(10.0);
+    series->insert(0,p);
+
+
 
     chartView = new QChartView(chart);
+
+
     chartView->setRenderHint(QPainter::Antialiasing);
+
+
     return chartView;
 }
 
 void MainWindow::update() {
-    QDateTime mz;
-    qint64 t=mz.currentDateTime().toMSecsSinceEpoch();
 
-    series->append(t, z++);
-    //series->append(t, z++);
-
-    qInfo(QString::number(t).toLatin1().data());
-    qInfo(QString::number(z).toLatin1().data());
+    series->append(QDateTime::currentMSecsSinceEpoch(),z);
+    z=z+5;
+    //series->append(, z++);
 
     QString s="insert into test(i) values(";
     s.append(QString::number(z));
