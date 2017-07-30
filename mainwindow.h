@@ -21,10 +21,12 @@ public:
 
 public slots:
     void update();
+    void showHistory();
 
 private:
     Ui::MainWindow *ui;
     QtCharts::QLineSeries *series;
+    QtCharts::QLineSeries *series2;
     double z;
     QSqlDatabase db;
     QtCharts::QChartView * createChart();
