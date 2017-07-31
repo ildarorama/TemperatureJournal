@@ -21,7 +21,10 @@ public:
 
 public slots:
     void update();
-    void showHistory();
+
+
+private slots:
+    void on_pushButton_clicked();
 
 private:
     Ui::MainWindow *ui;

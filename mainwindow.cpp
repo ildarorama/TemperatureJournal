@@ -29,12 +29,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->wdtChart->layout()->addWidget(createChart());
 
 
-    //qint64 q=QDateTime::currentMSecsSinceEpoch();
-    QDateTime to=QDateTime::currentDateTime();
-    QDateTime from=to;
-    to.addDays(1);
+    QDateTime from=QDateTime::currentDateTime();
     ui->edtDateFrom->setDateTime(from);
-    ui->edtDateTo->setDateTime(to);
+    ui->edtDateTo->setDateTime(from.addDays(1));
 
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
@@ -94,9 +91,7 @@ QChartView* MainWindow::createChart() {
 
 int idx=0;
 
-void MainWindow::showHistory() {
 
-}
 void MainWindow::update() {
 
     qint64 q=QDateTime::currentMSecsSinceEpoch();
@@ -123,4 +118,20 @@ void MainWindow::update() {
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+    QDateTime from=ui->edtDateFrom->dateTime();
+    QDateTime to=ui->edtDateTo->dateTime();
+    QString s="select from temp where timestamp>";
+    s.append(QString::number( from.toSecsSinceEpoch()));
+    s.append(" and timestamp < ");
+    s.append(QString::number( to.toSecsSinceEpoch()));
+
+    QSqlQuery q=db.exec(s);
+    while(q.next()) {
+        const QSqlResult *r=q.result();
+    }
+    qInfo(s.toLatin1().data());
 }
