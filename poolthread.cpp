@@ -9,12 +9,7 @@
 PoolThread::PoolThread() :
     port("/dev/ttyS0")
 {
-    db = QSqlDatabase::addDatabase("QMYSQL");
-    db.setHostName("127.0.0.1");
-    db.setDatabaseName("cook");
-    db.setUserName("cook");
-    db.setPassword("cook");
-    db.open();
+
 }
 
 int PoolThread::readData(uint16_t data[]) {
@@ -46,24 +41,30 @@ void PoolThread::createModbusMaster() {
 }
 
 void PoolThread::run() {
-//    createModbusMaster();
+    createModbusMaster();
+    db = QSqlDatabase::addDatabase("QMYSQL","pool");
+    db.setHostName("127.0.0.1");
+    db.setDatabaseName("cook");
+    db.setUserName("cook");
+    db.setPassword("cook");
 
-    QSqlQuery q;
-    q.prepare("insert into test(t1,t2,stmp) values(:t1,:t2,:stmp");
+    if ( db.open() ) {
+        qInfo() << "Database successfuly opened in pooling thread";
+    }
+
+    QSqlQuery q(db);
+    q.prepare("insert into test(t1,t2,stmp) values(:t1,:t2,:stmp)");
 
     while(! QThread::isInterruptionRequested()) {
         uint16_t data[16];
         if ( readData(data) == 16 ) {
             qDebug() << "Read successful";
             qint64 tt = QDateTime::currentMSecsSinceEpoch();
-            newData(14,67,tt);
-            q.bindValue("t1",14);
-            q.bindValue("t2",67);
-            q.bindValue("stmp",tt/1000);
-            if ( db.isOpen() ) {
-                q.exec();
-                qInfo("Saved");
-            }
+            newData(tt,data[0],data[1]);
+            q.bindValue(":t1",data[0]);
+            q.bindValue(":t2",data[1]);
+            q.bindValue(":stmp",tt/1000);
+            if (db.isOpen()) q.exec();
         } else {
              qDebug() << "Can not read Data";
         }

@@ -21,19 +21,17 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-
-    //QSettings setting=QSettings("setting.cfg",QSettings::NativeFormat);
     QString sPort=setting.value("port","/dev/ttyS0").toString();
     qint32 iPool=setting.value("pool","1000").toInt();
     ui->edtPort->setText(sPort);
     ui->edtPool->setValue(iPool);
 
-    db = QSqlDatabase::addDatabase("QMYSQL");
+    db = QSqlDatabase::addDatabase("QMYSQL","history");
     db.setHostName("127.0.0.1");
     db.setDatabaseName("cook");
     db.setUserName("cook");
     db.setPassword("cook");
-    bool ok = db.open();
+    db.open();
 
     ui->wdtChart->layout()->addWidget(createChart());
 
@@ -41,11 +39,6 @@ MainWindow::MainWindow(QWidget *parent) :
     QDateTime from=QDateTime::currentDateTime();
     ui->edtDateFrom->setDateTime(from);
     ui->edtDateTo->setDateTime(from.addDays(1));
-
-    QTimer *timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
-    timer->start(1000);
-    z=0;
 
     thread.setPort(ui->edtPort->toPlainText());
     QObject::connect(&thread,&PoolThread::newData,this,&MainWindow::update);
@@ -112,11 +105,11 @@ int idx=0;
 
 
 void MainWindow::update(qint64 stmp,int t1,int t2) {
-
-    qint64 q=QDateTime::currentMSecsSinceEpoch();
+    qDebug() << "Receive" << t1 << " " << t2;
     series->append(stmp,t1/10.0);
     series2->append(stmp,t2/10.0);
     chart->scroll(1,0);
+
     chartView->repaint();
 }
 
